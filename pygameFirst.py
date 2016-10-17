@@ -17,9 +17,6 @@ GREEN   = (0,255,0)
 ### Class and Function definitions
 
 class gameImage:
-    X = 0
-    Y = 0
-    
     def __init__(self, path):
         self.img = pygame.image.load(path)
         (self.width, self.height) = self.img.get_rect().size
@@ -32,6 +29,9 @@ def initImagePos():
     carImg.X = gameDisplay.get_rect().centerx - (int)(carImg.width/2)
     carImg.Y = (display_height - carImg.height - 10)
 
+    for road in roadImg:
+        road.X  = 0
+        road.Y  = 0
     for tree in treeImg:
         tree.X  = 0
         tree.Y  = 0 -(tree.height)
@@ -50,7 +50,7 @@ def gameLoop():
     
     gameExit = False
     roadNum = 0
-    treeNum = random.randrange(0, 100)%2
+    treeNum = random.randrange(0, 3)
 
     initImagePos()   
     
@@ -83,13 +83,19 @@ def gameLoop():
         if (carImg.X > display_width - carImg.width) or (carImg.X < 0):
             displayMsgCenter("You Crashed!!!")
             initImagePos()
+            treeNum = random.randrange(0, 3)
+
+        if ((treeImg[treeNum].Y + treeImg[treeNum].height) >= carImg.Y) and (treeImg[treeNum].Y <= (carImg.Y + carImg.height)) and (carImg.X >= treeImg[treeNum].X and carImg.X < (treeImg[treeNum].X + treeImg[treeNum].width - 10)):
+            displayMsgCenter("You Crashed!!!")
+            initImagePos()
+            treeNum = random.randrange(0, 3)
 
         if(pygame.time.get_ticks() - ticks) > 100:
             roadNum ^= 1
-            treeImg[treeNum].Y += 7
+            treeImg[treeNum].Y += 10
             if treeImg[treeNum].Y > display_height:
                 treeImg[treeNum].Y = 0 -(treeImg[treeNum].height)
-                treeNum = random.randrange(0, 2)%2
+                treeNum = random.randrange(0, 3)
 
             ticks=pygame.time.get_ticks()
             
@@ -101,6 +107,7 @@ roadImg = []
 roadImg.append(gameImage(os.path.join("image","Road1.jpg")))
 roadImg.append(gameImage(os.path.join("image","Road2.jpg")))
 treeImg = []
+treeImg.append(gameImage(os.path.join("image","tree1.png")))
 treeImg.append(gameImage(os.path.join("image","tree2.png")))
 treeImg.append(gameImage(os.path.join("image","tree3.png")))
 
